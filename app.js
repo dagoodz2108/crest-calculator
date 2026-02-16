@@ -52,7 +52,10 @@ async function calculate() {
       Hero: { maxRank: 6, crestType: "Gilded", crestPerRank: 15 }
     };
 
-    data.gear.items.forEach(item => {
+    const items = Object.values(data.gear.items);
+
+items.forEach(item => {
+
 
       if (!item.upgrade) return;
 
@@ -81,3 +84,4 @@ async function calculate() {
     output.textContent = "Error loading character. Open F12 → Console and tell me what it says.";
   }
 }
+
