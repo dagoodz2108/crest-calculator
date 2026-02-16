@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>WoW Crest Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #111;
+      color: white;
+      text-align: center;
+      padding: 40px;
+    }
+
+    input {
+      width: 400px;
+      padding: 10px;
+      margin: 10px;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    #output {
+      margin-top: 20px;
+      white-space: pre-wrap;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Raider.IO Crest Calculator</h1>
+
+<input id="raiderLink" placeholder="Paste Raider.IO character link">
+<br>
+<button onclick="calculate()">Calculate Crests</button>
+
+<div id="output"></div>
+
+<script src="app.js"></script>
+
+</body>
+</html>
