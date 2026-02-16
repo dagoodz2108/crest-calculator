@@ -7,27 +7,47 @@
       font-family: Arial, sans-serif;
       background-color: #111;
       color: white;
-      text-align: center;
       padding: 40px;
     }
 
     input {
-      width: 400px;
+      width: 420px;
       padding: 10px;
-      margin: 10px;
       font-size: 16px;
     }
 
     button {
-      padding: 10px 20px;
+      padding: 10px 18px;
       font-size: 16px;
+      margin-left: 10px;
       cursor: pointer;
     }
 
-    #output {
+    table {
+      border-collapse: collapse;
       margin-top: 20px;
-      white-space: pre-wrap;
+      width: 100%;
+      max-width: 800px;
+    }
+
+    th, td {
+      border: 1px solid #333;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background: #222;
+    }
+
+    #totals {
+      margin-top: 20px;
       font-size: 18px;
+    }
+
+    #status {
+      margin-top: 20px;
+      color: #aaa;
     }
   </style>
 </head>
@@ -36,10 +56,27 @@
 <h1>Raider.IO Crest Calculator</h1>
 
 <input id="raiderLink" placeholder="Paste Raider.IO character link">
-<br>
-<button onclick="calculate()">Calculate Crests</button>
+<button onclick="calculate()">Calculate</button>
 
-<div id="output"></div>
+<div id="status"></div>
+
+<div id="character"></div>
+
+<table id="gearTable" style="display:none;">
+  <thead>
+    <tr>
+      <th>Slot</th>
+      <th>Item</th>
+      <th>iLvl</th>
+      <th>Upgrade Track</th>
+      <th>Rank</th>
+      <th>Crests Needed</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<div id="totals"></div>
 
 <script src="app.js"></script>
 
