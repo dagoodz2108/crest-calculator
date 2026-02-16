@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>WoW Crest Calculator</title>
+  <title>Raider.IO Crest Calculator</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -27,7 +27,7 @@
       border-collapse: collapse;
       margin-top: 20px;
       width: 100%;
-      max-width: 800px;
+      max-width: 900px;
     }
 
     th, td {
@@ -40,7 +40,7 @@
       background: #222;
     }
 
-    #totals {
+    #totals, #farming {
       margin-top: 20px;
       font-size: 18px;
     }
@@ -49,6 +49,13 @@
       margin-top: 20px;
       color: #aaa;
     }
+
+    /* Row coloring by track */
+    .explorer { background-color: #2a2a2a; }
+    .adventurer { background-color: #2a2f3a; }
+    .veteran { background-color: #2a3a2a; }
+    .champion { background-color: #3a2a2a; }
+    .hero { background-color: #3a2a3a; }
   </style>
 </head>
 <body>
@@ -77,6 +84,7 @@
 </table>
 
 <div id="totals"></div>
+<div id="farming"></div>
 
 <script src="app.js"></script>
 
