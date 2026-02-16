@@ -7,25 +7,33 @@ async function calculate() {
 
     const link = document.getElementById("raiderLink").value.trim();
 
-    if (!link.includes("raider.io")) {
-      output.textContent = "Please paste a valid Raider.IO link.";
+    if (!link.includes("raider.io/characters")) {
+      output.textContent = "Please paste a full Raider.IO character link.";
       return;
     }
 
-    // Parse link
+    // Parse link safely
     const parts = link.split("/");
     const region = parts[4];
     const realm = parts[5];
     const name = parts[6];
 
+    if (!region || !realm || !name) {
+      output.textContent = "Could not read the link. Make sure it looks like:\nhttps://raider.io/characters/us/realm/name";
+      return;
+    }
+
     const apiUrl =
       `https://raider.io/api/v1/characters/profile?region=${region}&realm=${realm}&name=${name}&fields=gear`;
 
-    const response = await fetch(apiUrl);
+    // CORS proxy so it works locally and on GitHub Pages
+    const proxyUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(apiUrl);
+
+    const response = await fetch(proxyUrl);
     const data = await response.json();
 
     if (!data.gear || !data.gear.items) {
-      output.textContent = "Unable to read gear data.";
+      output.textContent = "Character loaded but gear data wasn't found.";
       return;
     }
 
@@ -36,7 +44,6 @@ async function calculate() {
       Gilded: 0
     };
 
-    // Basic upgrade rules (adjust if season changes)
     const crestRules = {
       Explorer: { maxRank: 8, crestType: "Weathered", crestPerRank: 15 },
       Adventurer: { maxRank: 8, crestType: "Weathered", crestPerRank: 15 },
@@ -71,6 +78,6 @@ async function calculate() {
 
   } catch (err) {
     console.error(err);
-    output.textContent = "Error loading character.";
+    output.textContent = "Error loading character. Open F12 → Console and tell me what it says.";
   }
 }
