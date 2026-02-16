@@ -4,10 +4,12 @@ async function calculate() {
   const table = document.getElementById("gearTable");
   const tbody = table.querySelector("tbody");
   const totalsDiv = document.getElementById("totals");
+  const farmingDiv = document.getElementById("farming");
   const characterDiv = document.getElementById("character");
 
   tbody.innerHTML = "";
   totalsDiv.innerHTML = "";
+  farmingDiv.innerHTML = "";
   characterDiv.innerHTML = "";
   table.style.display = "none";
 
@@ -18,7 +20,6 @@ async function calculate() {
     const linkInput = document.getElementById("raiderLink");
     const link = linkInput.value.trim();
 
-    // Save last search
     localStorage.setItem("lastRaiderLink", link);
 
     const parts = link.split("/");
@@ -66,8 +67,6 @@ async function calculate() {
     };
 
     const items = Object.entries(data.gear.items);
-
-    // Build sortable list
     const processedItems = [];
 
     items.forEach(([slot, item]) => {
@@ -110,7 +109,6 @@ async function calculate() {
 
     });
 
-    // Sort by crests needed descending
     processedItems.sort((a, b) => b.crestsNeeded - a.crestsNeeded);
 
     processedItems.forEach(item => {
@@ -142,6 +140,29 @@ async function calculate() {
       Estimated Valorstones: ${totals.Valorstones}
     `;
 
+    /* FARMING ESTIMATES */
+
+    // Adjustable assumptions
+    const crestPerRun = {
+      Weathered: 12,
+      Carved: 10,
+      Runed: 8,
+      Gilded: 6
+    };
+
+    function runsNeeded(total, perRun) {
+      if (total === 0) return 0;
+      return Math.ceil(total / perRun);
+    }
+
+    farmingDiv.innerHTML = `
+      <h3>Estimated Farming Required</h3>
+      Weathered: ~${runsNeeded(totals.Weathered, crestPerRun.Weathered)} runs<br>
+      Carved: ~${runsNeeded(totals.Carved, crestPerRun.Carved)} runs<br>
+      Runed: ~${runsNeeded(totals.Runed, crestPerRun.Runed)} runs<br>
+      Gilded: ~${runsNeeded(totals.Gilded, crestPerRun.Gilded)} runs<br>
+    `;
+
     status.textContent = "Done.";
 
   } catch (err) {
@@ -150,7 +171,6 @@ async function calculate() {
   }
 }
 
-// Auto-load last searched character
 window.onload = function () {
   const last = localStorage.getItem("lastRaiderLink");
   if (last) {
