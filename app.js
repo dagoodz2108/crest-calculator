@@ -15,7 +15,12 @@ async function calculate() {
 
   try {
 
-    const link = document.getElementById("raiderLink").value.trim();
+    const linkInput = document.getElementById("raiderLink");
+    const link = linkInput.value.trim();
+
+    // Save last search
+    localStorage.setItem("lastRaiderLink", link);
+
     const parts = link.split("/");
     const region = parts[4];
     const realm = parts[5];
@@ -40,7 +45,6 @@ async function calculate() {
       return;
     }
 
-    // Show character header
     characterDiv.innerHTML =
       `<h2>${data.name} - ${data.realm}</h2>
        <div>Average Item Level: ${data.gear.item_level_equipped}</div>`;
@@ -57,56 +61,85 @@ async function calculate() {
       Weathered: 0,
       Carved: 0,
       Runed: 0,
-      Gilded: 0
+      Gilded: 0,
+      Valorstones: 0
     };
 
     const items = Object.entries(data.gear.items);
+
+    // Build sortable list
+    const processedItems = [];
 
     items.forEach(([slot, item]) => {
 
       let track = "-";
       let rank = "-";
-      let crestsNeeded = "-";
+      let crestsNeeded = 0;
+      let rowClass = "";
 
       if (item.upgrade) {
         track = item.upgrade.track || "-";
         rank = item.upgrade.current_rank ?? "-";
 
         const rule = crestRules[track];
+
         if (rule && rank !== "-") {
           const remaining = rule.maxRank - rank;
+
           if (remaining > 0) {
             crestsNeeded = remaining * rule.crestPerRank;
             totals[rule.crestType] += crestsNeeded;
-          } else {
-            crestsNeeded = 0;
+
+            // rough valorstone estimate
+            totals.Valorstones += remaining * 10;
           }
         }
+
+        rowClass = track.toLowerCase();
       }
 
+      processedItems.push({
+        slot,
+        name: item.name,
+        ilvl: item.item_level,
+        track,
+        rank,
+        crestsNeeded,
+        rowClass
+      });
+
+    });
+
+    // Sort by crests needed descending
+    processedItems.sort((a, b) => b.crestsNeeded - a.crestsNeeded);
+
+    processedItems.forEach(item => {
+
       const row = document.createElement("tr");
+      if (item.rowClass) row.className = item.rowClass;
 
       row.innerHTML = `
-        <td>${slot}</td>
+        <td>${item.slot}</td>
         <td>${item.name}</td>
-        <td>${item.item_level}</td>
-        <td>${track}</td>
-        <td>${rank}</td>
-        <td>${crestsNeeded}</td>
+        <td>${item.ilvl}</td>
+        <td>${item.track}</td>
+        <td>${item.rank}</td>
+        <td>${item.crestsNeeded || "-"}</td>
       `;
 
       tbody.appendChild(row);
-
     });
 
     table.style.display = "table";
 
     totalsDiv.innerHTML = `
-      <h3>Total Crests Needed</h3>
+      <h3>Total Needed</h3>
       Weathered: ${totals.Weathered}<br>
       Carved: ${totals.Carved}<br>
       Runed: ${totals.Runed}<br>
-      Gilded: ${totals.Gilded}
+      Gilded: ${totals.Gilded}<br>
+      <br>
+      Estimated Valorstones: ${totals.Valorstones}
     `;
 
     status.textContent = "Done.";
@@ -116,3 +149,11 @@ async function calculate() {
     status.textContent = "Error loading character. Press F12 and send me the error.";
   }
 }
+
+// Auto-load last searched character
+window.onload = function () {
+  const last = localStorage.getItem("lastRaiderLink");
+  if (last) {
+    document.getElementById("raiderLink").value = last;
+  }
+};
